@@ -1,4 +1,5 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-styles/color.html">
@@ -8,6 +9,8 @@
 <link rel="import" href="../paper-input/paper-input-char-counter.html">
 <link rel="import" href="../paper-input/paper-input-container.html">
 <link rel="import" href="../paper-input/paper-input-error.html">
+
+<link rel="import" href="../../bower_components/roo-ui-core/roo-icons.html">
 
 
 <dom-module id="paper-number-input">
@@ -103,23 +106,6 @@
       label {
         pointer-events: none;
       }
-
-      #stepDownIcon {
-        @apply --paper-number-input-step-down-icon;
-      }
-
-      #stepUpIcon {
-        @apply --paper-number-input-step-up-icon;
-      }
-
-      #stepDownButton {
-        @apply --paper-number-input-step-down-button;
-      }
-
-      #stepUpButton {
-        @apply --paper-number-input-step-up-button;
-      }
-
     </style>
 
      <paper-input-container id="container"
@@ -130,13 +116,12 @@
         invalid="[[invalid]]">
 
       <paper-button
-          id="stepDownButton"
           tabindex="-1"
           class="spinner"
           slot="prefix"
           on-tap="stepDown"
           disabled="[[_computeStepDownButtonDisabled(value, min, disabled)]]">
-        <iron-icon id="stepDownIcon" icon="[[stepDownIcon]]"></iron-icon>
+        <iron-icon icon="roo:[[stepDownIcon]]"></iron-icon>
       </paper-button>
 
       <slot name="prefix" slot="prefix"></slot>
@@ -183,22 +168,17 @@
       <slot name="suffix" slot="suffix"></slot>
 
       <paper-button
-          id="stepUpButton"
           tabindex="-1"
           class="spinner"
           slot="suffix"
           on-tap="stepUp"
           disabled="[[_computeStepUpButtonDisabled(value, max, disabled)]]">
-        <iron-icon id="stepUpIcon" icon="[[stepUpIcon]]"></iron-icon>
+        <iron-icon icon="roo:[[stepUpIcon]]"></iron-icon>
       </paper-button>
 
-      <template is="dom-if" if="[[errorMessage]]">
-        <paper-input-error aria-live="assertive" slot="add-on">[[errorMessage]]</paper-input-error>
-      </template>
+        <paper-input-error style$="[[computeVisibility(errorMessage)]]" aria-live="assertive" slot="add-on">[[errorMessage]]</paper-input-error>
 
-      <template is="dom-if" if="[[charCounter]]">
-        <paper-input-char-counter slot="add-on"></paper-input-char-counter>
-      </template>
+        <paper-input-char-counter slot="add-on" style$="[[computeVisibility(charCounter)]]"></paper-input-char-counter>
 
     </paper-input-container>
 
@@ -220,6 +200,10 @@
 
       static get properties() {
         return {
+          value: {
+            type: Number,
+            notify: true
+          },
           type: {
             type: String,
             value: 'number',
@@ -260,7 +244,9 @@
       _valueChanged(value) {
         this._rangeValue(value);
       }
-
+      computeVisibility(flagVal) {
+        return flagVal ? 'display:inline-block; visibility:visible' : 'display:none; visibility:hidden';
+      }
       /**
       * Returns a reference to the focusable element. Overridden from PaperInputBehavior
       * to correctly focus the native input.
